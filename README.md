@@ -1,49 +1,93 @@
 # Spinning Towel
 
-A small C command-line program for managing player groups and running a
-"spinning towel" elimination game from a text query file.
+C로 작성한 명령줄 기반 조별 플레이어 관리 및 술래잡기 게임 프로그램입니다.
+플레이어 목록을 파일에서 불러온 뒤 그룹별 조회, 추가, 삭제를 할 수 있고,
+게임 쿼리 파일을 이용해 술래를 이동시키며 최종 탈락자를 출력합니다.
 
-## Build
+## 주요 기능
+
+- 플레이어 목록 파일 로드
+- 전체 또는 특정 그룹 플레이어 조회
+- 학번 기준 플레이어 중복 확인 및 추가
+- 학번 기준 플레이어 삭제
+- 게임 파일을 이용한 술래 이동 시뮬레이션
+- 종료 시 `result_game.txt`에 결과 저장
+
+## 빌드
 
 ```sh
 make
 ```
 
-This creates the `spinning-towel` executable.
-
-## Run
+빌드가 성공하면 `spinning-towel` 실행 파일이 생성됩니다.
 
 ```sh
-./spinning-towel [players-file]
+make clean
 ```
 
-If no player file is provided, the program looks for `players.txt`.
+빌드 결과물과 실행 중 생성되는 결과 파일을 삭제합니다.
 
-## Commands
+## 실행
 
-- `show`: print all players or a selected group
-- `add`: add a player
-- `remove`: remove a player by student ID
-- `play [game-file]`: run the game using `game.txt` or another query file
-- `quit`: save the result to `result_game.txt` and exit
+```sh
+./spinning-towel [플레이어_파일]
+```
 
-## Input Format
+플레이어 파일을 지정하지 않으면 기본값으로 `players.txt`를 읽습니다.
 
-Player files are tab-separated:
+예시:
+
+```sh
+./spinning-towel players.txt
+```
+
+## 명령어
+
+- `show`: 전체 또는 특정 그룹의 플레이어를 출력합니다.
+- `add`: 새 플레이어를 추가합니다.
+- `remove`: 학번으로 플레이어를 삭제합니다.
+- `play [게임_파일]`: 게임 파일을 읽어 술래 이동을 진행합니다.
+- `quit`: 결과를 저장하고 프로그램을 종료합니다.
+
+`play` 명령에서 게임 파일을 생략하면 `game.txt`를 사용합니다.
+
+## 플레이어 파일 형식
+
+플레이어 파일은 탭으로 구분된 텍스트 파일입니다.
 
 ```text
 Name	Gender	Dept	StudentID	Group
 ```
 
-Game query files contain target group/player positions, one pair per line:
+예시:
+
+```text
+Alice	F	CS	1001	1
+Bob	M	EE	1002	2
+```
+
+## 게임 파일 형식
+
+게임 파일은 이동할 대상의 그룹 번호와 그룹 내 위치를 한 줄에 하나씩 적습니다.
 
 ```text
 2 3
 4 1
 ```
 
-## Clean
+각 줄은 `그룹번호 플레이어위치` 형식입니다.
 
-```sh
-make clean
-```
+## 최근 개선사항
+
+- `Makefile`을 추가해 `make`로 바로 빌드할 수 있게 했습니다.
+- `.gitignore`를 추가해 `.DS_Store`, 실행 파일, 결과 파일 등이 저장소에 올라가지 않게 했습니다.
+- macOS/Linux에서도 빌드되도록 Windows 전용 `_stricmp` 호출을 호환 처리했습니다.
+- 명령어 입력 길이를 제한해 입력 버퍼 오버플로 위험을 줄였습니다.
+- 긴 플레이어 파일 경로를 실행 인자로 넘겼을 때 발생할 수 있던 버퍼 오버플로를 수정했습니다.
+- `play` 명령 뒤의 게임 파일명 입력 처리를 정리해 컴파일 경고를 제거했습니다.
+- 소스 파일 인코딩을 UTF-8로 변환해 GitHub에서 한글 주석이 깨지지 않게 했습니다.
+- 소스 파일 줄 끝을 LF로 정리해 Git diff와 코드 리뷰가 깔끔하게 보이도록 했습니다.
+
+## 저장 파일
+
+프로그램을 `quit`으로 종료하면 현재 플레이어 상태가 `result_game.txt`에 저장됩니다.
