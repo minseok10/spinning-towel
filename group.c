@@ -8,47 +8,47 @@ void printPlayer(NODE * group[], int n) {
 	int i;
 	NODE * count;
 	if (n < 0 || n > 5) {
-		printf("number error\n"); //¼ıÀÚ Á¶°Ç
+		printf("number error\n"); //ìˆ«ì ì¡°ê±´
 		return;
 	}
 
 	if (n == 0) {
 		for (i = 1; i < 6; i++)
-			printPlayer(group, i); //0ÀÏ°æ¿ì Àç±ÍÇÔ¼ö
+			printPlayer(group, i); //0ì¼ê²½ìš° ì¬ê·€í•¨ìˆ˜
 	}
 	else {
 		printf("\n%-18s %-6s %-10s %-9s\n", "Name", "Gender", "Dept", "StudentID");
 		printf("================== GROUP %d ===================\n", n);
-		if (group[n - 1] == NULL) //ºó ±×·ì
+		if (group[n - 1] == NULL) //ë¹ˆ ê·¸ë£¹
 			return;
 		count = group[n - 1];
-		printf("%-18s %-6c %-10s %-9d\n", count->name, count->gender, count->dept, count->id); //±×·ìÀÇ head
-		for (count = group[n - 1]->next; count != group[n - 1]; count = count->next) //±× ³ª¸ÓÁö
+		printf("%-18s %-6c %-10s %-9d\n", count->name, count->gender, count->dept, count->id); //ê·¸ë£¹ì˜ head
+		for (count = group[n - 1]->next; count != group[n - 1]; count = count->next) //ê·¸ ë‚˜ë¨¸ì§€
 			printf("%-18s %-6c %-10s %-9d\n", count->name, count->gender, count->dept, count->id);
 	}
 }
 
-void insertList(NODE * group[], NODE * temp) { //»ğÀÔ
+void insertList(NODE * group[], NODE * temp) { //ì‚½ì…
 	NODE * count;
 
-	if (group[temp->group - 1] == NULL) { //ºó°ø°£
+	if (group[temp->group - 1] == NULL) { //ë¹ˆê³µê°„
 		temp->next = temp;
 		group[temp->group - 1] = temp;
 	}
 	else {
-		for (count = group[temp->group - 1]; count->next != group[temp->group - 1]; count = count->next); //³¡ºÎºĞ¿¡´Ù°¡»ğÀÔ
+		for (count = group[temp->group - 1]; count->next != group[temp->group - 1]; count = count->next); //ëë¶€ë¶„ì—ë‹¤ê°€ì‚½ì…
 		temp->next = count->next;
 		count->next = temp;
 	}
 }
 
-void removeList(NODE * group[],int i, NODE * count) { //count->next ³ëµå Á¦°Å
+void removeList(NODE * group[],int i, NODE * count) { //count->next ë…¸ë“œ ì œê±°
 	NODE * temp;
-	if (group[i] == group[i]->next) { //1°³³²¾ÒÀ»¶§
+	if (group[i] == group[i]->next) { //1ê°œë‚¨ì•˜ì„ë•Œ
 		free(group[i]);
 		group[i] = NULL;
 	}
-	else { //count´ÙÀ½ ³ëµå Á¦°Å
+	else { //countë‹¤ìŒ ë…¸ë“œ ì œê±°
 		temp = count->next;
 		count->next = temp->next;
 		if (temp == group[i])
@@ -57,8 +57,8 @@ void removeList(NODE * group[],int i, NODE * count) { //count->next ³ëµå Á¦°Å
 	}
 }
 
-void exchangeList(NODE * x, NODE *y) { //ÇÃ·¹ÀÌ¾î Á¤º¸±³È¯
-	NODE temp; //ÀÓ½ÃÀúÀå
+void exchangeList(NODE * x, NODE *y) { //í”Œë ˆì´ì–´ ì •ë³´êµí™˜
+	NODE temp; //ì„ì‹œì €ì¥
 
 	strcpy(temp.name, x->name);
 	temp.gender = x->gender;
@@ -75,32 +75,32 @@ void exchangeList(NODE * x, NODE *y) { //ÇÃ·¹ÀÌ¾î Á¤º¸±³È¯
 	strcpy(y->dept, temp.dept);
 	y->id = temp.id;
 
-	x->group = y->group; //¼ú·¡(x)¿¡ Àü±×·ì ÀúÀå
+	x->group = y->group; //ìˆ ë˜(x)ì— ì „ê·¸ë£¹ ì €ì¥
 }
 
 void savePlayer(NODE * group[]) {
-	FILE * save; //ÀúÀå ÆÄÀÏ
+	FILE * save; //ì €ì¥ íŒŒì¼
 
 	int i;
 	NODE * count;
 
 	save = fopen("result_game.txt", "w");
 	for (i = 0; i < 5; i++) {
-		if (group[i] == NULL) //ºó ±×·ì
+		if (group[i] == NULL) //ë¹ˆ ê·¸ë£¹
 			continue;
 		count = group[i];
-		fprintf(save, "%s\t%c\t%s\t%d\t%d\n", count->name, count->gender, count->dept, count->id, count->group); //±×·ìÀÇ head
-		for (count = group[i]->next; count != group[i]; count = count->next) //±× ³ª¸ÓÁö
+		fprintf(save, "%s\t%c\t%s\t%d\t%d\n", count->name, count->gender, count->dept, count->id, count->group); //ê·¸ë£¹ì˜ head
+		for (count = group[i]->next; count != group[i]; count = count->next) //ê·¸ ë‚˜ë¨¸ì§€
 			fprintf(save, "%s\t%c\t%s\t%d\t%d\n", count->name, count->gender, count->dept, count->id, count->group);
 	}
-	fclose(save); //ÆÄÀÏ ´İ±â
+	fclose(save); //íŒŒì¼ ë‹«ê¸°
 }
 
 void plush(NODE * group[]) {
 	int i;
 	NODE * count;
 	for (i = 0; i < 5; i++) {
-		while (group[i] != NULL) { //group ÀÌ ºô ¶§±îÁö
+		while (group[i] != NULL) { //group ì´ ë¹Œ ë•Œê¹Œì§€
 			for (count = group[i]; count->next != group[i]; count = count->next);
 			removeList(group, i, count);
 		}

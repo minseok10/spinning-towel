@@ -7,18 +7,17 @@
 void fileLoad(NODE * group[],char * filename) {
 	FILE * players;
 	NODE * temp;
-	NODE * count;
 
 	char tname[22];
 	char tgender;
 	char tdept[21];
 	int tid;
-	int tgroup; //ÇĞ»ı ½Å»óÁ¤º¸ÀúÀå
+	int tgroup; //í•™ìƒ ì‹ ìƒì •ë³´ì €ì¥
 
 	players = fopen(filename, "r");
 
 	if (players == NULL) {
-		printf("Cannot open file!\n"); //¿­±â ¿¡·¯
+		printf("Cannot open file!\n"); //ì—´ê¸° ì—ëŸ¬
 		exit(403);
 	}
 	while (fscanf(players, " %[^\t] %c %s %d %d", tname, &tgender, tdept, &tid, &tgroup) != EOF) {
@@ -29,31 +28,31 @@ void fileLoad(NODE * group[],char * filename) {
 		temp->id = tid;
 		temp->group = tgroup;
 		temp->next = NULL;
-		//temp³ëµå¿¡ µ¥ÀÌÅÍº¹»ç
-		insertList(group, temp); //group ¿¡ temp³ëµå »ğÀÔ
+		//tempë…¸ë“œì— ë°ì´í„°ë³µì‚¬
+		insertList(group, temp); //group ì— tempë…¸ë“œ ì‚½ì…
 	}
-	fclose(players); //ÆÄÀÏ ´İ±â
+	fclose(players); //íŒŒì¼ ë‹«ê¸°
 }
 
 void addPlayer(NODE * group[]) {
-	NODE * temp; //»õ ³ëµå
+	NODE * temp; //ìƒˆ ë…¸ë“œ
 	NODE * count;
-	int tid; //ÇĞ¹ø½Äº°
+	int tid; //í•™ë²ˆì‹ë³„
 	int i;
 
 	printf("StudentID: ");
 	scanf("%d", &tid);
-	for (i = 0; i < 5; i++) { //ÇĞ¹ø duplicate check
+	for (i = 0; i < 5; i++) { //í•™ë²ˆ duplicate check
 		if (group[i] == NULL)
 			continue;
 		for (count = group[i]; 1; count = count->next) {
-			if (count->id == tid) { //°°ÀºÇĞ¹ø ¹ß°ß
+			if (count->id == tid) { //ê°™ì€í•™ë²ˆ ë°œê²¬
 				printf("Player already exists!");
 				printf("\n%-18s %-6s %-10s %-10s %-6s\n", "Name", "Gender", "Dept", "StudentID", "Group");
 				printf("%-18s %-6c %-10s %-10d %-6d\n", count->name, count->gender, count->dept, count->id, count->group);
 				return;
 			}
-			if (count->next == group[i]) //ÇÑ ±×·ì½ºÄµ ³¡
+			if (count->next == group[i]) //í•œ ê·¸ë£¹ìŠ¤ìº” ë
 				break;
 		}
 	}
@@ -68,8 +67,8 @@ void addPlayer(NODE * group[]) {
 	scanf("%s", temp->dept);
 	printf("Group: ");
 	scanf("%d", &(temp->group));
-	//»õ ³ëµå ÀÛ¼º ¹× ÀÔ·Â
-	insertList(group, temp); //temp¸¦ »ğÀÔ
+	//ìƒˆ ë…¸ë“œ ì‘ì„± ë° ì…ë ¥
+	insertList(group, temp); //tempë¥¼ ì‚½ì…
 	printf("Player successfully added to group %d.\n", temp->group);
 }
 
@@ -80,16 +79,16 @@ void rmPlayer(NODE * group[]) {
 
 	printf("StudentID: ");
 	scanf("%d", &tid);
-	for (i = 0; i < 5; i++) { //ÇĞ¹øÀÏÄ¡ scan
+	for (i = 0; i < 5; i++) { //í•™ë²ˆì¼ì¹˜ scan
 		if (group[i] == NULL)
 			continue;
 		for (count = group[i]; 1; count = count->next) {
-			if (count->next->id == tid) { //count->next °¡ ÀÏÄ¡ÇÏ´Â°¡ °Ë»ç
-				removeList(group, i, count); //count ´ÙÀ½³ëµå Á¦°Å
+			if (count->next->id == tid) { //count->next ê°€ ì¼ì¹˜í•˜ëŠ”ê°€ ê²€ì‚¬
+				removeList(group, i, count); //count ë‹¤ìŒë…¸ë“œ ì œê±°
 				printf("Player sucessfully removed from group %d.\n", i + 1);
 				return;
 			}
-			if (count->next == group[i]) //ÇÑ ±×·ì °Ë»ç³¡
+			if (count->next == group[i]) //í•œ ê·¸ë£¹ ê²€ì‚¬ë
 				break;
 		}
 	}

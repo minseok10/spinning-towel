@@ -1,6 +1,11 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#ifdef _WIN32
+#define strcasecmp _stricmp
+#else
+#include<strings.h>
+#endif
 #include"group.h"
 #include"player.h"
 
@@ -8,12 +13,12 @@ char command();
 void gameplay(NODE * group[]);
 
 int main(int argc, char * argv[]) {
-	NODE * group[5] = { NULL, }; //±¸Á¶Ã¼ Æ÷ÀÎÅÍ ¹è¿­
-	char filename[31] = "players.txt"; //ÆÄÀÏÀÌ¸§
-	int num; //show ÀÔ·Â
+	NODE * group[5] = { NULL, }; //êµ¬ì¡°ì²´ í¬ì¸í„° ë°°ì—´
+	char filename[256] = "players.txt"; //íŒŒì¼ì´ë¦„
+	int num; //show ì…ë ¥
 
 	if (argc == 2)
-		strcpy(filename, argv[1]); //¸í·ÉÁÙ ÀÎ¼ö
+		snprintf(filename, sizeof(filename), "%s", argv[1]); //ëª…ë ¹ì¤„ ì¸ìˆ˜
 	fileLoad(group, filename);
 	printPlayer(group, 0);
 
@@ -35,7 +40,7 @@ int main(int argc, char * argv[]) {
 			break;
 		case 'q':
 			savePlayer(group);
-			plush(group); //ÀüÃ¼ÇÒ´ç ÇØÁ¦
+			plush(group); //ì „ì²´í• ë‹¹ í•´ì œ
 			printf("File saved. Bye!\n");
 			return 0;
 		default:
@@ -45,36 +50,44 @@ int main(int argc, char * argv[]) {
 	return 1;
 }
 
-char command() { //¸í·É¾î¸¦ ÀÔ·Â¹Ş¾Æ Æ¯Á¤ ¹®ÀÚ¸¦ ¹İÈ¯
+char command() { //ëª…ë ¹ì–´ë¥¼ ì…ë ¥ë°›ì•„ íŠ¹ì • ë¬¸ìë¥¼ ë°˜í™˜
 	char cmd[10];
 	printf("\n>>");
-	scanf("%s", cmd);
-	if (_stricmp(cmd, "show") == 0) //¼Ò¹®ÀÚÃ³¸® _stricmp
+	scanf("%9s", cmd);
+	if (strcasecmp(cmd, "show") == 0) //ì†Œë¬¸ìì²˜ë¦¬ _stricmp
 		return 's';
-	if (_stricmp(cmd, "add") == 0)
+	if (strcasecmp(cmd, "add") == 0)
 		return 'a';
-	if (_stricmp(cmd, "remove") == 0)
+	if (strcasecmp(cmd, "remove") == 0)
 		return 'r';
-	if (_stricmp(cmd, "play") == 0)
+	if (strcasecmp(cmd, "play") == 0)
 		return 'p';
-	if (_stricmp(cmd, "quit") == 0)
+	if (strcasecmp(cmd, "quit") == 0)
 		return 'q';
 	return 0;
 }
 
 void gameplay(NODE * group[]) {
-	FILE * query; //°ÔÀÓÆÄÀÏ Äõ¸®
-	NODE * x, *y; //ÆíÀÇ¿ë ÀÓ½Ã
-	NODE *temp = malloc(sizeof(NODE)); //¼ú·¡ÀÇ Á¤º¸ ÀúÀå
+	FILE * query; //ê²Œì„íŒŒì¼ ì¿¼ë¦¬
+	NODE * x, *y; //í¸ì˜ìš© ì„ì‹œ
+	NODE *temp = malloc(sizeof(NODE)); //ìˆ ë˜ì˜ ì •ë³´ ì €ì¥
 	int i;
-	int ag, ap = 1; //¼ú·¡ group, player
-	int tg, tp; //Å¸°Ù group, player
-	int prev; //¼ú·¡°¡¾îµğ±×·ìÀÌ¾ú´Â°¡
+	int ag, ap = 1; //ìˆ ë˜ group, player
+	int tg, tp; //íƒ€ê²Ÿ group, player
+	int prev; //ìˆ ë˜ê°€ì–´ë””ê·¸ë£¹ì´ì—ˆëŠ”ê°€
+	int ch;
+	size_t len;
 
 	char filename[20] = "game.txt";
-
-	scanf("%[ ]"); //Å°º¸µå¹öÆÛÀÇ½ºÆäÀÌ½º¹Ù Á¦°Å
-	scanf("%[^\n]", filename); //¿£ÅÍÀÖÀ¸¸é ¹«µ¿ÀÛ, ±×¿Ü¿¡ ÀÔ·Â
+	while ((ch = getchar()) == ' ' || ch == '\t');
+	if (ch != '\n' && ch != EOF) {
+		ungetc(ch, stdin);
+		if (fgets(filename, sizeof(filename), stdin) != NULL) {
+			len = strlen(filename);
+			if (len > 0 && filename[len - 1] == '\n')
+				filename[len - 1] = '\0';
+		}
+	}
 
 	query = fopen(filename, "r");
 	if (query == NULL) {
@@ -90,39 +103,39 @@ void gameplay(NODE * group[]) {
 			return;
 		}
 	}
-	ag = i + 1; //¼ú·¡ Á¶
+	ag = i + 1; //ìˆ ë˜ ì¡°
 
-	for (x = group[ag - 1], i = 1; i < ap; x = x->next, i++); //Ã¹ ¼ú·¡
+	for (x = group[ag - 1], i = 1; i < ap; x = x->next, i++); //ì²« ìˆ ë˜
 
 	strcpy(temp->name, "");
 	strcpy(temp->dept, "");
 	temp->gender = 0;
 	temp->id = 0;
 	temp->group = 0;
-	temp->next = NULL; //¼ú·¡°ø°£ ÃÊ±âÈ­
+	temp->next = NULL; //ìˆ ë˜ê³µê°„ ì´ˆê¸°í™”
 
-	exchangeList(temp, x); //¼ú·¡·Î ÀÌµ¿
+	exchangeList(temp, x); //ìˆ ë˜ë¡œ ì´ë™
 
-	for (y = group[ag - 1]; 1; y = y->next) { //x ÁÖ¼Ò¸¦ next·Î °¡Áö´Â nodeÀÇ ÁÖ¼Ò¸¦ y¿¡ ÀúÀå
+	for (y = group[ag - 1]; 1; y = y->next) { //x ì£¼ì†Œë¥¼ nextë¡œ ê°€ì§€ëŠ” nodeì˜ ì£¼ì†Œë¥¼ yì— ì €ì¥
 		if (y->next == x) {
-			removeList(group, ag - 1, y); //x ³ëµå Á¦°Å
+			removeList(group, ag - 1, y); //x ë…¸ë“œ ì œê±°
 			break;
 		}
-		if (y->next == group[ag - 1]) //¹«ÇÑ·çÇÁ¹æÁö
+		if (y->next == group[ag - 1]) //ë¬´í•œë£¨í”„ë°©ì§€
 			break;
 	}
 
 	printf("From                          To\n");
 	while (fscanf(query, "%d %d", &tg, &tp) != EOF) {
-		if (group[tg - 1] == NULL) //ºó±×·ì°Ç³Ê¶Ù±â
+		if (group[tg - 1] == NULL) //ë¹ˆê·¸ë£¹ê±´ë„ˆë›°ê¸°
 			continue;
-		for (y = group[tg - 1], i = 1; i < tp; y = y->next, i++); //Å¸°Ù À§Ä¡
+		for (y = group[tg - 1], i = 1; i < tp; y = y->next, i++); //íƒ€ê²Ÿ ìœ„ì¹˜
 		prev = temp->group;
-		exchangeList(temp, y); //Å¸°ÙÀ» ¼ú·¡·Î
+		exchangeList(temp, y); //íƒ€ê²Ÿì„ ìˆ ë˜ë¡œ
 		printf("%-15s (Group %d)  ->  %-15s (Group %d)\n", y->name, prev, temp->name, tg);
 	}
 	printf("\nGame over!\n");
 	printf("%s (Group %d) is out.\n", temp->name, tg);
-	free(temp); //¼ú·¡ Á¦°Å
-	fclose(query); //ÆÄÀÏ ´İ±â
+	free(temp); //ìˆ ë˜ ì œê±°
+	fclose(query); //íŒŒì¼ ë‹«ê¸°
 }

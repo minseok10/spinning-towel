@@ -1,4 +1,4 @@
-#pragma once //node Çü½Ä ÀçÁ¤ÀÇ ¹æÁö
+#pragma once //node í˜•ì‹ ì¬ì •ì˜ ë°©ì§€
 struct node {
 	char name[22];
 	char gender;

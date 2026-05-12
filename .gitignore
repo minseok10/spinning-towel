@@ -1,0 +1,7 @@
+.DS_Store
+*.o
+*.out
+spinning-towel
+result_game.txt
+players.txt
+game.txt
