@@ -54,7 +54,7 @@ char command() { //명령어를 입력받아 특정 문자를 반환
 	char cmd[10];
 	printf("\n>>");
 	scanf("%9s", cmd);
-	if (strcasecmp(cmd, "show") == 0) //소문자처리 _stricmp
+	if (strcasecmp(cmd, "show") == 0) //대소문자 구분 없이 비교
 		return 's';
 	if (strcasecmp(cmd, "add") == 0)
 		return 'a';
